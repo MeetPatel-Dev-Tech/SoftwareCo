@@ -73,3 +73,10 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Keystore file - keep your signing key private
+android/app/my-release-key.keystore
+
+# Local gradle.properties with secrets - keep it out of git
+android/gradle.properties
+
