@@ -26,6 +26,7 @@ export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
     if (isLoginValid()) {
@@ -46,26 +47,29 @@ export default function LoginScreen() {
   };
 
   const loginUser = async () => {
+    setLoading(true);
     try {
       const response = await axiosInstance.post('/login', {
         username,
         password,
       });
 
-      console.log('response ::', response);
+      // console.log('response ::', response); // Avoid logging sensitive info
       if (response.status === 200) {
         const token = response.data.token;
-
         await AsyncStorage.setItem('userToken', token);
+        setLoading(false);
         navigation.navigate('UserList');
       } else {
+        setLoading(false);
         Alert.alert(
           'Login Failed',
           response?.data?.message || 'Invalid credentials',
         );
       }
     } catch (error: any) {
-      console.log(error);
+      setLoading(false);
+      // console.log(error);
       Alert.alert(
         'Login Failed',
         error?.message || 'Something went wrong. Please try again.',
@@ -105,7 +109,11 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          <CommonButton title="Log In" onPress={handleLogin} />
+          <CommonButton
+            title="Log In"
+            onPress={handleLogin}
+            loading={loading}
+          />
         </View>
       </View>
     </SafeAreaView>
