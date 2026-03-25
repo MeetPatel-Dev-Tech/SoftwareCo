@@ -1,0 +1,35 @@
+workflows:
+  react-native-app:
+    name: React Native App Build
+    max_build_duration: 60
+
+    environment:
+      node: 18
+      vars:
+        PACKAGE_NAME: 'com.softwarecotask'
+
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+
+      - name: Install pods (iOS)
+        script: |
+          cd ios && pod install && cd ..
+
+      - name: Build Android APK
+        script: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Build iOS (optional)
+        script: |
+          xcodebuild \
+            -workspace ios/YourApp.xcworkspace \
+            -scheme YourApp \
+            -configuration Release \
+            -sdk iphoneos
+
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+      - build/ios/ipa/*.ipa
